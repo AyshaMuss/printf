@@ -10,31 +10,31 @@
  */
 int hexa(va_list va)
 {
-unsigned int c;
-int  i, j, temp;
-int arr[100];
+	unsigned int c;
+	int  i, j, temp;
+	int arr[100];
 
-c = va_arg(va, unsigned int);
-i = 0;
-temp = 0;
-if (c == 0)
-{
-_putchar('0');
-return (1);
-}
-while (c != 0)
-{
-temp = c % 16;
-if (temp < 10)
-arr[i] = 48 + temp;
-else
-arr[i] = 87 + temp;
-c = c / 16;
-i++;
-}
-for (j = i - 1; j >= 0; j--)
-_putchar(arr[j]);
-return (i);
+	c = va_arg(va, unsigned int);
+	i = 0;
+	temp = 0;
+	if (c == 0)
+	{
+		_putchar('0');
+		return (1);
+	}
+	while (c != 0)
+	{
+		temp = c % 16;
+		if (temp < 10)
+			arr[i] = 48 + temp;
+		else
+			arr[i] = 87 + temp;
+		c = c / 16;
+		i++;
+	}
+	for (j = i - 1; j >= 0; j--)
+		_putchar(arr[j]);
+	return (i);
 }
 /**
 * hexa_upper - print a
@@ -44,29 +44,29 @@ return (i);
 */
 int hexa_upper(va_list va)
 {
-unsigned int c;
-int  i, j, temp;
-int arr[100];
+	unsigned int c;
+	int  i, j, temp;
+	int arr[100];
 
-c = va_arg(va, unsigned int);
-i = 0;
-temp = 0;
-if (c == 0)
-{
-_putchar('0');
-return (1);
-}
-while (c != 0)
-{
-temp = c % 16;
-if (temp < 10)
-arr[i] = 48 + temp;
-else
-arr[i] = 55 + temp;
-c = c / 16;
-i++;
-}
-for (j = i - 1; j >= 0; j--)
-_putchar(arr[j]);
-return (i);
+	c = va_arg(va, unsigned int);
+	i = 0;
+	temp = 0;
+	if (c == 0)
+	{
+		_putchar('0');
+		return (1);
+	}
+	while (c != 0)
+	{
+		temp = c % 16;
+		if (temp < 10)
+			arr[i] = 48 + temp;
+		else
+			arr[i] = 55 + temp;
+		c = c / 16;
+		i++;
+	}
+	for (j = i - 1; j >= 0; j--)
+		_putchar(arr[j]);
+	return (i);
 }

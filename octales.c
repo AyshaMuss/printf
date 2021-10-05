@@ -3,28 +3,28 @@
 #include "main.h"
 
 /**
- * binary - print a binary number
+ * octal - print a
  *@va:unsigned integer input
  *
  * Return: no return
  */
-int binary(va_list va)
+int octal(va_list va)
 {
 	unsigned int c;
 	int  i, j;
 	int arr[100];
 
-	c = va_arg(va, int);
+	c = va_arg(va, unsigned int);
 	i = 0;
 	if (c == 0)
 	{
 		_putchar('0');
 		return (1);
 	}
-	while (c > 0)
+	while (c != 0)
 	{
-		arr[i] = c % 2;
-		c = c / 2;
+		arr[i] = c % 8;
+		c = c / 8;
 		i++;
 	}
 	for (j = i - 1; j >= 0; j--)
