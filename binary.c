@@ -1,13 +1,13 @@
 #include <stdarg.h>
 #include <stdio.h>
-#include "holberton.h"
+#include "main.h"
 
 /**
  * binary - print a binary number
  *@va:unsigned integer input
  *
- * Return: no return
- */
+ * Return: nothing
+**/
 int binary(va_list va)
 {
 unsigned int c;
