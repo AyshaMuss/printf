@@ -1,82 +1,127 @@
+#include <stdarg.h>
 #include "main.h"
-#include <stdlib.h>
-
 /**
- * check_for_specifiers - checks if there is a valid format specifier
- * @format: possible format specifier
- *
- * Return: pointer to valid function or NULL
-**/
-static int (*check_for_specifiers(const char *format))(va_list)
-{
-unsigned int i;
-print_t p[] = {
-{"c", print_c},
-{"s", print_s},
-{"i", print_i},
-{"d", print_d},
-{"u", print_u},
-{"b", print_b},
-{"o", print_o},
-{"x", print_x},
-{"X", print_X},
-{"p", print_p},
-{"S", print_S},
-{"r", print_r},
-{"R", print_R},
-{NULL, NULL}
-};
-
-for (i = 0; p[i].t != NULL; i++)
-{
-if (*(p[i].t) == *format)
-{
-			break;
-}
-}
-return (p[i].f);
-}
-
-/**
- * _printf - prints anything
- * @format: list of argument types passed to the function
- *
- * Return: number of characters printed
-**/
+ * _printf - print any formated string
+ * @format: string format
+ * Return: the number of characters printed
+ */
 int _printf(const char *format, ...)
 {
-unsigned int i = 0, count = 0;
-va_list valist;
-int (*f)(va_list);
+va_list list;
+int count = 0, printed = 0;
 
-if (format == NULL)
+if (!format)
 return (-1);
-va_start(valist, format);
-while (format[i])
+va_start(list, format);
+while (format && format[count])
 {
-for (; format[i] != '%' && format[i]; i++)
+if (format[count] == '%')
 {
-_putchar(format[i]);
-count++;
-}
-if (!format[i])
-return (count);
-f = check_for_specifiers(&format[i + 1]);
-if (f != NULL)
-{
-count += f(valist);
-i += 2;
-continue;
-}
-if (!format[i + 1])
+if (format[count + 1] == '\0')
 return (-1);
-_putchar(format[i]);
-count++;
-if (format[i + 1] == '%')
-i += 2;
+format_values(list, format, &printed, &count);
+}
 else
-i++;
+{
+_putchar(format[count]);
+printed += 1;
+count += 1;
 }
-va_end(valist);
-return (count);
+}
+va_end(list);
+return (printed);
+}
+/**
+ * format_values - format string
+ * @list: list of args
+ * @format: format string
+ * @printed: number of chars printed
+ * @count: count iterator
+ * Return: pointer to func that correspond to operator
+ */
+void format_values(va_list list, const char *format, int *printed, int *count)
+{
+int f = 0, tobi = 0, tooc = 0;
+unsigned int num = 0;
+
+switch (format[*count + 1])
+{
+case '%':
+_putchar(format[*count + 1]);
+*printed += 1;
+break;
+case 'c':
+_putchar(va_arg(list, int));
+*printed += 1;
+break;
+case 's':
+format_string(list, printed, 's');
+break;
+case 'd': case 'i':
+format_int(list, printed);
+break;
+case 'b':
+num = va_arg(list, unsigned int);
+tobi = _tobinoct(num, 0, 2);
+*printed  += tobi;
+break;
+case 'o':
+num = va_arg(list, unsigned int);
+tooc = _tobinoct(num, 0, 8);
+*printed += tooc;
+break;
+case 'r':
+format_string(list, printed, 'r');
+break;
+default:
+*count += 1;
+*printed += 1;
+_putchar('%');
+f = 1;
+}
+if (!f)
+*count += 2;
+}
+/**
+ * format_int - test number formats
+ * @list: list of args
+ * @printed: pointer to amount of printed chars
+ * Return: void
+ */
+void format_int(va_list list, int *printed)
+{
+int num = va_arg(list, int);
+
+if (num <= 0)
+*printed += 1;
+_printd(num);
+*printed += _numlen(num);
+}
+/**
+ * format_string - test string format
+ * @list: list of args
+ * @printed: pointer to amount of printed chars
+ * Return: void
+ */
+void format_string(va_list list, int *printed, char sr)
+{
+char *s;
+s = va_arg(list, char *);
+
+if (s)
+{
+*printed += _strlen(s);
+if (sr == 's')
+_puts(s);
+else
+_printstr(s);
+}
+else
+{
+*printed += _strlen("(null)");
+if (sr == 's')
+_puts("(null)");
+else
+_printstr("(null)");
+}
 }
