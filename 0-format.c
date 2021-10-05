@@ -1,129 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include "main.h"
 /**
- * _printf - print any formated string
- * @format: string format
- * Return: the number of characters printed
+A conversion specification is a complete unit such as %*13lf.
+The (format) conversion specifier is the last letter, such as f in the example above
+Each conversion specification is introduced by the character %. After the %, the following appear in sequence:
+
+An optional assignment-suppressing character *.
+An optional decimal integer greater than zero that specifies the maximum field width (in characters).
+An optional length modifier that specifies the size of the receiving object.
+A conversion specifier character that specifies the type of conversion to be applied.
 **/
+
 int _printf(const char *format, ...)
 {
-va_list list;
-int count = 0, printed = 0;
-
-if (!format)
-return (-1);
-va_start(list, format);
-while (format && format[count])
+unsigned int i = 0, j = 0;
+char *str;
+va_list ls;
+va_start(ls, format);
+while (format && format[i])
 {
-if (format[count] == '%')
+switch (format[i])
 {
-if (format[count + 1] == '\0')
-return (-1);
-format_values(list, format, &printed, &count);
-}
-else
-{
-_putchar(format[count]);
-printed += 1;
-count += 1;
-}
-}
-va_end(list);
-return (printed);
-}
-
-/**
- * format_values - format string
- * @list: list of args
- * @format: format string
- * @printed: number of chars printed
- * @count: count iterator
- * Return: pointer to func that correspond to operator
-**/
-void format_values(va_list list, const char *format, int *printed, int *count)
-{
-int f = 0, tobi = 0, tooc = 0;
-unsigned int num = 0;
-
-switch (format[*count + 1])
-{
-case '%':
-_putchar(format[*count + 1]);
-*printed += 1;
+case 'c':
+printf("%c", va_arg(ls, int));
 break;
-ase 'c':
-_putchar(va_arg(list, int));
-*printed += 1;
+case 'f':
+printf("%", va_arg(ls, double));
 break;
 case 's':
-format_string(list, printed, 's');
+str = va_arg(ls, char*);
+if (str == NULL)
+str = "(nil)";
+printf("%s", str);
 break;
-case 'd': case 'i':
-format_int(list, printed);
-break;
-case 'b':
-num = va_arg(list, unsigned int);
-tobi = _tobinoct(num, 0, 2);
-*printed  += tobi;
-break;
-case 'o':
-num = va_arg(list, unsigned int);
-tooc = _tobinoct(num, 0, 8);
-*printed += tooc;
-break;
-case 'r':
-format_string(list, printed, 'r');
-break;
-default:
-*count += 1;
-*printed += 1;
-_putchar('%');
-f = 1;
 }
-if (!f)
-*count += 2;
-}
-/**
- * format_int - test number formats
- * @list: list of args
- * @printed: pointer to amount of printed chars
- * Return: void
-**/
-
-void format_int(va_list list, int *printed)
+j = i + 1;
+while (format[j] && (format[j] == 'c' || format[j] == 'i' || format[j] == 'f' || format[j] == 's'))
 {
-int num = va_arg(list, int);
-
-if (num <= 0)
-*printed += 1;
-_printd(num);
-*printed += _numlen(num);
+printf(", ");
+break;
 }
-/**
- * format_string - test string format
- * @list: list of args
- * @printed: pointer to amount of printed chars
- * Return: void
- */
-void format_string(va_list list, int *printed, char sr)
-{
-char *s;
-s = va_arg(list, char *);
-
-if (s)
-{
-*printed += _strlen(s);
-if (sr == 's')
-_puts(s);
-else
-_printstr(s);
+i++;
 }
-else
-{
-*printed += _strlen("(null)");
-if (sr == 's')
-_puts("(null)");
-else
-_printstr("(null)");
-}
+printf("\n");
+va_end(ls);
+return (0);
 }
