@@ -1,24 +1,33 @@
-#ifndef our_printf
-#define our_printf
-#include <stdio.h>
+#ifndef _MAIN_H_
+#define _MAIN_H_
+
 #include <stdarg.h>
 /**
- * struct specifier - struct specifier
- * @valid: the valid character.
- * @f: the functions associated.
- *
+ * struct print - structure for printing various types
+ * @t: type to print
+ * @f: function to print
  */
-typedef struct specifier
+typedef struct print
 {
-char *valid;
+char *t;
 int (*f)(va_list);
-} spec;
-int _printf(const char *format, ...);
-int print_c(va_list args);
-int print_s(va_list args);
-int print_d(va_list args);
-int print_i(va_list args);
+} print_t;
+
 int _putchar(char c);
-int print_percent(va_list args);
-int (*get_function(char x))(va_list args);
+int _printf(const char *format, ...);
+int print_c(va_list c);
+int print_s(va_list s);
+int print_i(va_list i);
+int print_d(va_list d);
+int print_u(va_list u);
+int print_b(va_list b);
+int print_o(va_list o);
+int print_x(va_list x);
+int print_X(va_list X);
+int print_p(va_list p);
+int print_S(va_list S);
+int print_r(va_list r);
+int print_R(va_list R);
+
 #endif
+
