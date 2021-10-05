@@ -1,39 +1,76 @@
-#include "mains.h"
-#include <stdlib.h>
+#include "main.h"
 
 /**
- * print_R - prints a string in rot13
- * @R: string to print
- *
- * Return: number of chars printed
- */
-int print_R(va_list R)
-{
-char *str;
-unsigned int i, j;
-int count = 0;
-char in[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-char out[] = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
+*print_rot - Print a string in rot13
+*@va: va_list arguments
+*Return: string
+*/
 
-str = va_arg(R, char *);
-if (str == NULL)
-str = "(ahyy)";
-for (i = 0; str[i]; i++)
+int print_rot(va_list va)
 {
-for (j = 0; in[j]; j++)
+
+char *s;
+int i;
+char n[] = "(null)";
+
+s = rot13(malloc_str(va_arg(va, char *)));
+if (s == NULL)
 {
-if (in[j] == str[i])
+for (i = 0; n[i] != '\0'; i++)
+_putchar(n[i]);
+return (6);
+}
+for (i = 0; s[i] != '\0'; i++)
+_putchar(s[i]);
+free(s);
+return (i);
+}
+
+/**
+*malloc_str - create a new space in memory to copy the string
+*@str: string
+*Return: string
+*/
+
+char *malloc_str(char *str)
 {
-_putchar(out[j]);
-count++;
+char *copy;
+unsigned int j, i;
+
+if (str ==  NULL)
+return (NULL);
+for (i = 0; str[i] != '\0'; i++)
+;
+copy = malloc((i + 1) * sizeof(char));
+if (copy == NULL)
+return (NULL);
+for (j = 0; j <= i; j++)
+copy[j] = str[j];
+return (copy);
+}
+
+/**
+ *rot13 - String to rot13
+ *@p: pointer the string we want to convert in rot13
+ *Return: string
+ */
+char *rot13(char *p)
+{
+int j;
+int i;
+char a1[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"};
+char a2[] = {"NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm"};
+
+for (j = 0; p[j] != '\0'; j++)
+{
+for (i = 0; a1[i] != '\0'; i++)
+{
+if (p[j] == a1[i])
+{
+p[j] = a2[i];
 break;
 }
 }
-if (!in[j])
-{
-_putchar(str[i]);
-count++;
 }
-}
-return (count);
+return (p);
 }
