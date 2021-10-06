@@ -2,28 +2,39 @@
 #define _MAIN_H_
 
 #include <stdarg.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+
 /**
- * struct print - structure for printing various types
- * @t: type to print
- * @f: function to print
- */
-typedef struct print
+* struct types_arguments - Struct op
+*
+* @t: The operator
+* @f: The function associated
+*/
+typedef struct types_arguments
 {
-	char *t;
-	int (*f)(va_list);
-} print_t;
-
-int _printf(const char *format, ...);
-void print_strings(const char *separator, const unsigned int n, ...);
-char *rot13(char *s);
+char t;
+int (*f)(va_list va);
+} types;
 int _putchar(char c);
-void rev_string(char *s);
-int _puts(char *str);
-void revstr(char *str1);
-int printf(const char *format, ...);
-void print_all(const char * const format, ...);
-float newPrecision(float n, float i);
+int _strlen(char *s);
+int print_number(va_list va);
+int binary(va_list va);
+int print_unsigned(va_list va);
+int hexa(va_list va);
+int hexa_upper(va_list va);
+int octal(va_list va);
+int print_rot(va_list va);
+char *malloc_str(char *str);
+char *rot13(char *p);
+int print_rev(va_list va);
+int hexa_special(unsigned int c);
+int stringhexa(va_list va);
+int pointer(va_list va);
+int hexa_pointer(unsigned long int c);
+int _printf(const char *format, ...);
 
-void print_strings(const char *separator, const unsigned int n, ...);
 #endif
 

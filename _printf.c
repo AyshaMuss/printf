@@ -1,126 +1,134 @@
 #include <stdarg.h>
 #include "main.h"
+
 /**
- * _printf - print any formated string
- * @format: string format
- * Return: the number of characters printed
+ * t_char - print a character
+ *@va:character
+ *
+ * Return: no return
+ */
+int t_char(va_list va)
+{
+int c;
+
+c = va_arg(va, int);
+_putchar(c);
+return (1);
+}
+/**
+ * t_string - print a string
+ *@va: pointer to string
+ *
+ * Return: no return
+ */
+int t_string(va_list va)
+{
+int i, j;
+char n[] = "(null)";
+char *s = va_arg(va, char *);
+
+if (s == NULL)
+{
+for (i = 0; n[i] != '\0'; i++)
+_putchar(n[i]);
+return (6);
+}
+for (j = 0; s[j] != '\0'; j++)
+_putchar(s[j]);
+return (j);
+}
+/**
+ * print_number - Entry point
+ *@va: the integer to print
+ * Return: no return
+ */
+int print_number(va_list va)
+{
+int i, len, r, l;
+unsigned int abs, num, numt;
+int n = va_arg(va, int);
+
+len = 0;
+i = 0;
+r = 1;
+l = 1;
+if (n < 0)
+{
+_putchar('-');
+len++;
+abs = -n;
+} else
+{
+abs = n;
+}
+
+num = abs;
+while (num > 0)
+{
+num /= 10;
+i++;
+}
+
+while (r < i)
+{
+l *= 10;
+r++;
+}
+while (l >= 1)
+{
+numt = (abs / l) % 10;
+_putchar(numt + '0');
+len++;
+l /= 10;
+}
+return (len);
+}
+
+/**
+ * _printf - print output according to a format
+ *@format: first argument
+ *
+ * Return: the number of characters printed(excluding the null byte)
  */
 int _printf(const char *format, ...)
 {
-va_list list;
-int count = 0, printed = 0;
+int i = 0, j, len = 0, count;
+va_list valist;
+types difftypes[] = {{'c', t_char}, {'s', t_string}, {'d', print_number},
+{'i', print_number}, {'b', binary}, {'u', print_unsigned},
+{'x', hexa}, {'X', hexa_upper}, {'o', octal}, {'R', print_rot},
+{'r', print_rev}, {'S', stringhexa}, {'p', pointer}};
 
-if (!format)
+if (format == NULL || (format[0] == '%' && format[1] == 0))
 return (-1);
-va_start(list, format);
-while (format && format[count])
+va_start(valist, format);
+while (format != NULL && format[i])
 {
-if (format[count] == '%')
-{
-if (format[count + 1] == '\0')
-return (-1);
-format_values(list, format, &printed, &count);
-}
+if (format[i] != '%')
+len += _putchar(format[i]);
 else
 {
-_putchar(format[count]);
-printed += 1;
-count += 1;
-}
-}
-va_end(list);
-return (printed);
-}
-/**
- * format_values - format string
- * @list: list of args
- * @format: format string
- * @printed: number of chars printed
- * @count: count iterator
- * Return: pointer to func that correspond to operator
- */
-void format_values(va_list list, const char *format, int *printed, int *count)
+i++;
+if (format[i] == '%')
+len += _putchar('%');
+j = 0;
+count = 0;
+while (j < 13)
 {
-int f = 0, tobi = 0, tooc = 0;
-unsigned int num = 0;
-
-switch (format[*count + 1])
+if (format[i] == difftypes[j].t)
 {
-case '%':
-_putchar(format[*count + 1]);
-*printed += 1;
-break;
-case 'c':
-_putchar(va_arg(list, int));
-*printed += 1;
-break;
-case 's':
-format_string(list, printed, 's');
-break;
-case 'd': case 'i':
-format_int(list, printed);
-break;
-case 'b':
-num = va_arg(list, unsigned int);
-tobi = _tobinoct(num, 0, 2);
-*printed  += tobi;
-break;
-case 'o':
-num = va_arg(list, unsigned int);
-tooc = _tobinoct(num, 0, 8);
-*printed += tooc;
-break;
-case 'r':
-format_string(list, printed, 'r');
-break;
-default:
-*count += 1;
-*printed += 1;
+len += difftypes[j].f(valist);
+count = 1;
+break; }
+j++; }
+if (!count && format[i] != '%')
+{
+len++;
+len++;
 _putchar('%');
-f = 1;
+_putchar(format[i]); }}
+i++; }
+va_end(valist);
+return (len);
 }
-if (!f)
-*count += 2;
-}
-/**
- * format_int - test number formats
- * @list: list of args
- * @printed: pointer to amount of printed chars
- * Return: void
- */
-void format_int(va_list list, int *printed)
-{
-int num = va_arg(list, int);
-if (num <= 0)
-*printed += 1;
-_printd(num);
-*printed += _numlen(num);
-}
-/**
- * format_string - test string format
- * @list: list of args
- * @printed: pointer to amount of printed chars
- * Return: void
- */
-void format_string(va_list list, int *printed, char sr)
-{
-char *s;
-s = va_arg(list, char *);
 
-if (s)
-{
-*printed += _strlen(s);
-if (sr == 's')
-_puts(s);
-else
-_printstr(s);
-}
-else
-{
-*printed += _strlen("(null)");
-if (sr == 's')
-_puts("(null)");
-else
-_printstr("(null)");
-}
-}
