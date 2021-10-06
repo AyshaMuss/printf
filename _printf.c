@@ -5,7 +5,8 @@
 /**
  * get_op - select function for conversion char
  * @c: char to check
- * Return: pointer to function
+ *
+ * Return: returns NULL.
  */
 
 int (*get_op(const char c))(va_list)
@@ -42,7 +43,8 @@ return (NULL);
 /**
  * _printf - Reproduce behavior of printf function
  * @format: format string
- * Return: value of printed chars
+ *
+ * Return: returns the sum
  */
 
 int _printf(const char *format, ...)
