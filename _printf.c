@@ -1,126 +1,88 @@
 #include <stdarg.h>
 #include "main.h"
+#include <stddef.h>
+
 /**
- * _printf - print any formated string
- * @format: string format
- * Return: the number of characters printed
+ * get_op - select function for conversion char
+ * @c: char to check
+ *
+ * Return: returns NULL.
  */
+
+int (*get_op(const char c))(va_list)
+{
+int i = 0;
+
+flags_p fp[] = {
+{"c", print_char},
+{"s", print_str},
+{"i", print_nbr},
+{"d", print_nbr},
+{"b", print_binary},
+{"o", print_octal},
+{"x", print_hexa_lower},
+{"X", print_hexa_upper},
+{"u", print_unsigned},
+{"S", print_str_unprintable},
+{"r", print_str_reverse},
+{"p", print_ptr},
+{"R", print_rot13},
+{"%", print_percent}
+};
+while (i < 14)
+{
+if (c == fp[i].c[0])
+{
+return (fp[i].f);
+}
+i++;
+}
+return (NULL);
+}
+
+/**
+ * _printf - Reproduce behavior of printf function
+ * @format: format string
+ *
+ * Return: returns the sum
+ */
+
 int _printf(const char *format, ...)
 {
-va_list list;
-int count = 0, printed = 0;
+va_list ap;
+int sum = 0, i = 0;
+int (*func)();
 
-if (!format)
+if (!format || (format[0] == '%' && format[1] == '\0'))
 return (-1);
-va_start(list, format);
-while (format && format[count])
-{
-if (format[count] == '%')
-{
-if (format[count + 1] == '\0')
-return (-1);
-format_values(list, format, &printed, &count);
-}
-else
-{
-_putchar(format[count]);
-printed += 1;
-count += 1;
-}
-}
-va_end(list);
-return (printed);
-}
-/**
- * format_values - format string
- * @list: list of args
- * @format: format string
- * @printed: number of chars printed
- * @count: count iterator
- * Return: pointer to func that correspond to operator
- */
-void format_values(va_list list, const char *format, int *printed, int *count)
-{
-int f = 0, tobi = 0, tooc = 0;
-unsigned int num = 0;
+va_start(ap, format);
 
-switch (format[*count + 1])
+while (format[i])
 {
-case '%':
-_putchar(format[*count + 1]);
-*printed += 1;
-break;
-case 'c':
-_putchar(va_arg(list, int));
-*printed += 1;
-break;
-case 's':
-format_string(list, printed, 's');
-break;
-case 'd': case 'i':
-format_int(list, printed);
-break;
-case 'b':
-num = va_arg(list, unsigned int);
-tobi = _tobinoct(num, 0, 2);
-*printed  += tobi;
-break;
-case 'o':
-num = va_arg(list, unsigned int);
-tooc = _tobinoct(num, 0, 8);
-*printed += tooc;
-break;
-case 'r':
-format_string(list, printed, 'r');
-break;
-default:
-*count += 1;
-*printed += 1;
-_putchar('%');
-f = 1;
-}
-if (!f)
-*count += 2;
-}
-/**
- * format_int - test number formats
- * @list: list of args
- * @printed: pointer to amount of printed chars
- * Return: void
- */
-void format_int(va_list list, int *printed)
+if (format[i] == '%')
 {
-int num = va_arg(list, int);
-if (num <= 0)
-*printed += 1;
-_printd(num);
-*printed += _numlen(num);
-}
-/**
- * format_string - test string format
- * @list: list of args
- * @printed: pointer to amount of printed chars
- * Return: void
- */
-void format_string(va_list list, int *printed, char sr)
+if (format[i + 1] != '\0')
+func = get_op(format[i + 1]);
+if (func == NULL)
 {
-char *s;
-s = va_arg(list, char *);
-
-if (s)
-{
-*printed += _strlen(s);
-if (sr == 's')
-_puts(s);
-else
-_printstr(s);
+_putchar(format[i]);
+sum++;
+i++;
 }
 else
 {
-*printed += _strlen("(null)");
-if (sr == 's')
-_puts("(null)");
-else
-_printstr("(null)");
+sum += func(ap);
+i += 2;
+continue;
 }
+}
+else
+{
+_putchar(format[i]);
+sum++;
+i++;
+}
+}
+va_end(ap);
+return (sum);
 }
