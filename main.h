@@ -2,39 +2,42 @@
 #define _MAIN_H_
 
 #include <stdarg.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <limits.h>
-#include <stdlib.h>
+int _printf(const char *format, ...);
+int print_char(va_list ap);
+int print_str(va_list ap);
+int print_nbr(va_list ap);
+int print_binary(va_list ap);
+int print_octal(va_list ap);
+int print_hexa_lower(va_list ap);
+int print_hexa_upper(va_list ap);
+int print_unsigned(va_list ap);
+int print_str_unprintable(va_list ap);
+int print_str_reverse(va_list ap);
+int print_ptr(va_list ap);
+int print_rot13(va_list ap);
+int print_percent(va_list ap __attribute__((unused)));
+int print_number(int n);
+int print_unsigned_number(unsigned int n);
+int _putchar(char c);
+int _puts(char *str, int ascii);
+int _nbr_len(int prmNumber);
+int _strlen_recursion(char *s);
+int convert_alpha_numeric(int nb, int upper);
+char *convert_rot13(char *str);
+char *convert_base(unsigned long nb, unsigned int base, int upper);
+char *_strdup(char *str);
+char *convert_base_pointer(unsigned long p);
 
 /**
-* struct types_arguments - Struct op
-*
-* @t: The operator
-* @f: The function associated
-*/
-typedef struct types_arguments
-{
-char t;
-int (*f)(va_list va);
-} types;
-int _putchar(char c);
-int _strlen(char *s);
-int print_number(va_list va);
-int binary(va_list va);
-int print_unsigned(va_list va);
-int hexa(va_list va);
-int hexa_upper(va_list va);
-int octal(va_list va);
-int print_rot(va_list va);
-char *malloc_str(char *str);
-char *rot13(char *p);
-int print_rev(va_list va);
-int hexa_special(unsigned int c);
-int stringhexa(va_list va);
-int pointer(va_list va);
-int hexa_pointer(unsigned long int c);
-int _printf(const char *format, ...);
+ * struct flags_printf - struct conversion to function
+ * @c: flag string
+ * @f: pointer to func
+ */
 
+typedef struct flags_printf
+{
+char *c;
+int (*f)(va_list);
+} flags_p;
 #endif
 

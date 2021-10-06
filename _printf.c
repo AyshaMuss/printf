@@ -1,134 +1,86 @@
 #include <stdarg.h>
 #include "main.h"
+#include <stddef.h>
 
 /**
- * t_char - print a character
- *@va:character
- *
- * Return: no return
+ * get_op - select function for conversion char
+ * @c: char to check
+ * Return: pointer to function
  */
-int t_char(va_list va)
-{
-int c;
 
-c = va_arg(va, int);
-_putchar(c);
-return (1);
-}
-/**
- * t_string - print a string
- *@va: pointer to string
- *
- * Return: no return
- */
-int t_string(va_list va)
+int (*get_op(const char c))(va_list)
 {
-int i, j;
-char n[] = "(null)";
-char *s = va_arg(va, char *);
+int i = 0;
 
-if (s == NULL)
+flags_p fp[] = {
+{"c", print_char},
+{"s", print_str},
+{"i", print_nbr},
+{"d", print_nbr},
+{"b", print_binary},
+{"o", print_octal},
+{"x", print_hexa_lower},
+{"X", print_hexa_upper},
+{"u", print_unsigned},
+{"S", print_str_unprintable},
+{"r", print_str_reverse},
+{"p", print_ptr},
+{"R", print_rot13},
+{"%", print_percent}
+};
+while (i < 14)
 {
-for (i = 0; n[i] != '\0'; i++)
-_putchar(n[i]);
-return (6);
+if (c == fp[i].c[0])
+{
+return (fp[i].f);
 }
-for (j = 0; s[j] != '\0'; j++)
-_putchar(s[j]);
-return (j);
-}
-/**
- * print_number - Entry point
- *@va: the integer to print
- * Return: no return
- */
-int print_number(va_list va)
-{
-int i, len, r, l;
-unsigned int abs, num, numt;
-int n = va_arg(va, int);
-
-len = 0;
-i = 0;
-r = 1;
-l = 1;
-if (n < 0)
-{
-_putchar('-');
-len++;
-abs = -n;
-} else
-{
-abs = n;
-}
-
-num = abs;
-while (num > 0)
-{
-num /= 10;
 i++;
 }
-
-while (r < i)
-{
-l *= 10;
-r++;
-}
-while (l >= 1)
-{
-numt = (abs / l) % 10;
-_putchar(numt + '0');
-len++;
-l /= 10;
-}
-return (len);
+return (NULL);
 }
 
 /**
- * _printf - print output according to a format
- *@format: first argument
- *
- * Return: the number of characters printed(excluding the null byte)
+ * _printf - Reproduce behavior of printf function
+ * @format: format string
+ * Return: value of printed chars
  */
+
 int _printf(const char *format, ...)
 {
-int i = 0, j, len = 0, count;
-va_list valist;
-types difftypes[] = {{'c', t_char}, {'s', t_string}, {'d', print_number},
-{'i', print_number}, {'b', binary}, {'u', print_unsigned},
-{'x', hexa}, {'X', hexa_upper}, {'o', octal}, {'R', print_rot},
-{'r', print_rev}, {'S', stringhexa}, {'p', pointer}};
+va_list ap;
+int sum = 0, i = 0;
+int (*func)();
 
-if (format == NULL || (format[0] == '%' && format[1] == 0))
+if (!format || (format[0] == '%' && format[1] == '\0'))
 return (-1);
-va_start(valist, format);
-while (format != NULL && format[i])
+va_start(ap, format);
+
+while (format[i])
 {
-if (format[i] != '%')
-len += _putchar(format[i]);
+if (format[i] == '%')
+{
+if (format[i + 1] != '\0')
+func = get_op(format[i + 1]);
+if (func == NULL)
+{
+_putchar(format[i]);
+sum++;
+i++;
+}
 else
 {
-i++;
-if (format[i] == '%')
-len += _putchar('%');
-j = 0;
-count = 0;
-while (j < 13)
-{
-if (format[i] == difftypes[j].t)
-{
-len += difftypes[j].f(valist);
-count = 1;
-break; }
-j++; }
-if (!count && format[i] != '%')
-{
-len++;
-len++;
-_putchar('%');
-_putchar(format[i]); }}
-i++; }
-va_end(valist);
-return (len);
+sum += func(ap);
+i += 2;
+continue;
 }
-
+}
+else
+{
+_putchar(format[i]);
+sum++;
+i++;
+}
+}
+va_end(ap);
+return (sum);
+}
